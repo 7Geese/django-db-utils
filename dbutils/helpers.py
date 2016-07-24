@@ -23,7 +23,10 @@ def distinct(l):
     return list(set(l))
 
 
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
+try:
+    from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+except ImportError:
+    from django.db.models.fields.related import SingleRelatedObjectDescriptor as ReverseOneToOneDescriptor
 
 
 def attach_foreignkey(objects, field, related=[], database='default'):
@@ -34,7 +37,7 @@ def attach_foreignkey(objects, field, related=[], database='default'):
 
     Works with both ForeignKey and OneToOne (reverse) lookups.
     """
-    is_foreignkey = isinstance(field, SingleRelatedObjectDescriptor)
+    is_foreignkey = isinstance(field, ReverseOneToOneDescriptor)
 
     if not is_foreignkey:
         field = field.field
